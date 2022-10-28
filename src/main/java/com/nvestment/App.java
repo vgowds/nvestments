@@ -2,6 +2,7 @@ package com.nvestment;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -16,27 +17,30 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
 
-        logger.info(input.getBody());
-
         Gson gson = new Gson();
         Fund bodyInput = null;
-        bodyInput = gson.fromJson(input.getBody(), Fund.class);
+        logger.info("input.getHttpMethod() "+input.getHttpMethod());
         if(input.getHttpMethod().equals("POST") ){
-            System.out.println("POST METHOD");
+            logger.info("POST METHOD");
             bodyInput = gson.fromJson(input.getBody(), Fund.class);
-            System.out.println("POST METHOD "+bodyInput.getSymbol());
+            logger.info("POST METHOD "+bodyInput.getSymbol());
         } else if (input.getHttpMethod().equals("GET")) {
-            System.out.println("GET METHOD");
-            Map<String, String> inputParams = input.getQueryStringParameters();
-            for (Map.Entry<String, String> entry : inputParams.entrySet()) {
-                if(entry.getKey().equals("symbol")){
-                    bodyInput.setSymbol(entry.getValue());
+            logger.info("GET METHOD ...");
+            Map<String, List<String>> inputParams = input.getMultiValueQueryStringParameters();
+            for (Map.Entry<String, List<String>> entry : inputParams.entrySet()) {
+                List<String> valueList = entry.getValue();
+                logger.info("List value "+valueList.toString());
+                for (String valueStr : valueList) {
+                    bodyInput = new Fund();
+                    bodyInput.setSymbol(valueStr);
                 }
             }
-            System.out.println("GET METHOD "+bodyInput.getSymbol());
+            logger.info("GET METHOD "+bodyInput.getSymbol());
+
         }else{
+            bodyInput = new Fund();
             bodyInput.setSymbol("NO_FOUND");
-            System.out.println("UNKNOWN METHOD "+bodyInput.getSymbol());
+            logger.info("UNKNOWN METHOD "+bodyInput.getSymbol());
         }
 
         String result = getFundDetails(bodyInput.getSymbol());
