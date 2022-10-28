@@ -15,12 +15,29 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     static Logger logger = LoggerFactory.getLogger(App.class);
 
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
+
         logger.info(input.getBody());
-        System.out.println("INPUT BODY - START");
-        System.out.println(input.getBody());
-        System.out.println("INPUT BODY - END");
+
         Gson gson = new Gson();
-        Fund bodyInput = gson.fromJson(input.getBody(), Fund.class);
+        Fund bodyInput = null;
+        bodyInput = gson.fromJson(input.getBody(), Fund.class);
+        if(input.getHttpMethod().equals("POST") ){
+            System.out.println("POST METHOD");
+            bodyInput = gson.fromJson(input.getBody(), Fund.class);
+            System.out.println("POST METHOD "+bodyInput.getSymbol());
+        } else if (input.getHttpMethod().equals("GET")) {
+            System.out.println("GET METHOD");
+            Map<String, String> inputParams = input.getQueryStringParameters();
+            for (Map.Entry<String, String> entry : inputParams.entrySet()) {
+                if(entry.getKey().equals("symbol")){
+                    bodyInput.setSymbol(entry.getValue());
+                }
+            }
+            System.out.println("GET METHOD "+bodyInput.getSymbol());
+        }else{
+            bodyInput.setSymbol("NO_FOUND");
+            System.out.println("UNKNOWN METHOD "+bodyInput.getSymbol());
+        }
 
         String result = getFundDetails(bodyInput.getSymbol());
         String output = String.format("{ \"result\": %s }", result);
