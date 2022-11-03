@@ -1,6 +1,8 @@
 package com.nvestment;
 
 import com.google.gson.Gson;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +46,14 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         }
 
         String result = getFundDetails(bodyInput.getSymbol());
-        String output = String.format("{ \"result\": %s }", result);
+        //String output = String.format("{ \"result\": %s }", result);
+        String output = result;
 
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put("Content-Type", "application/json");
+        responseHeaders.put("Access-Control-Allow-Headers", "*");
+        responseHeaders.put("Access-Control-Allow-Origin", "*");
+        responseHeaders.put("Access-Control-Allow-Methods", "*");
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent().withHeaders(responseHeaders);
 
         return response
@@ -58,26 +64,29 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     private String getFundDetails(String symbol) {
         
         Fund returnFundDetails = new Fund();
+        returnFundDetails.setTodayDate((new Date()).toString());
+        returnFundDetails.setPriceDate("10/27/2022");
         if(symbol.equals("FAARX")){
             returnFundDetails.setSymbol("FAARX");
-            returnFundDetails.setCompanyName("Nuveen All-American Municipal Bond Fund Class I");
+            returnFundDetails.setFundName("Nuveen All-American Municipal Bond Fund Class I");
             returnFundDetails.setPrice("9.57");
-            returnFundDetails.setPriceDate("10/27/2022");
+
         } else if (symbol.equals("NHMRX")) {
             returnFundDetails.setSymbol("NHMRX");
-            returnFundDetails.setCompanyName("Nuveen High Yield Municipal Bond Fund Class I");
+            returnFundDetails.setFundName("Nuveen High Yield Municipal Bond Fund Class I");
             returnFundDetails.setPrice("13.97");
-            returnFundDetails.setPriceDate("10/27/2022");
+
+
         } else if (symbol.equals("NUVBX")) {
             returnFundDetails.setSymbol("NUVBX");
-            returnFundDetails.setCompanyName("Nuveen Intermediate Duration Municipal Bond Fund Class I");
+            returnFundDetails.setFundName("Nuveen Intermediate Duration Municipal Bond Fund Class I");
             returnFundDetails.setPrice("8.37");
-            returnFundDetails.setPriceDate("10/27/2022");
+
         }else{
             returnFundDetails.setSymbol(symbol);
-            returnFundDetails.setCompanyName("NO DATA");
+            returnFundDetails.setFundName("NO DATA");
             returnFundDetails.setPrice("NO DATA");
-            returnFundDetails.setPriceDate("10/27/2022");
+
 
         }
         return  returnFundDetails.toString();

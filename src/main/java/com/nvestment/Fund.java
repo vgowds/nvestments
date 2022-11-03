@@ -9,8 +9,8 @@ public class Fund {
         return symbol;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getFundName() {
+        return fundName;
     }
 
     public String getPrice() {
@@ -21,8 +21,8 @@ public class Fund {
         this.symbol = symbol;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 
     public void setPrice(String price) {
@@ -30,8 +30,18 @@ public class Fund {
     }
 
     private String symbol;
-    private String companyName;
+    private String fundName;
     private String price;
+
+    public String getTodayDate() {
+        return todayDate;
+    }
+
+    public void setTodayDate(String todayDate) {
+        this.todayDate = todayDate;
+    }
+
+    private String todayDate;
 
     public String getPriceDate() {
         return priceDate;
@@ -46,10 +56,11 @@ public class Fund {
     @Override
     public String toString() {
         return "{" +
-                "Symbol='" + symbol + '\'' +
-                ", CompanyName='" + companyName + '\'' +
-                ", Price='" + price + '\'' +
-                ", Price Date='" + priceDate + '\'' +
-                '}';
+                "\"Symbol\":  \"" + this.symbol + "\", " +
+                "\"Fund Name\":\"" + this.fundName + "\", " +
+                "\"Price\": \"" + this.price + "\", " +
+                "\"Price Date\": \"" + this.priceDate + "\", " +
+                "\"Today Date\": \"" + this.todayDate + "\" " +
+                "}";
     }
 }
